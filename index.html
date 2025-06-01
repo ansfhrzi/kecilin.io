@@ -15,7 +15,6 @@
             --warning: #ff9e00;
             --gray: #6c757d;
             --border: #dee2e6;
-            --shopee: #ee4d2d;
         }
         
         * {
@@ -163,15 +162,6 @@
         .btn-warning:hover {
             background: #e68a00;
             box-shadow: 0 5px 15px rgba(255, 158, 0, 0.3);
-        }
-        
-        .btn-shopee {
-            background: var(--shopee);
-        }
-        
-        .btn-shopee:hover {
-            background: #d4432b;
-            box-shadow: 0 5px 15px rgba(238, 77, 45, 0.3);
         }
         
         .preview-container {
@@ -358,30 +348,6 @@
             display: none;
         }
         
-        .ad-notice {
-            display: none;
-            text-align: center;
-            padding: 10px;
-            background-color: rgba(238, 77, 45, 0.1);
-            border-radius: 8px;
-            margin-top: 15px;
-            font-size: 14px;
-            color: var(--shopee);
-        }
-        
-        .ad-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        
-        .shopee-icon {
-            font-size: 24px;
-            color: var(--shopee);
-        }
-        
         footer {
             text-align: center;
             padding: 20px;
@@ -499,21 +465,11 @@
             <div class="download-container" id="downloadContainer">
                 <p>Kompresi selesai! Gambar Anda telah dikompresi menjadi <span id="finalSize">0 KB</span></p>
                 <button class="btn" id="downloadBtn">Unduh Gambar</button>
-                
-                <div class="ad-notice" id="adNotice">
-                    Terima kasih telah menggunakan aplikasi kami! Iklan telah dibuka di tab baru.
-                </div>
-                
-                <div class="ad-container">
-                    <div class="shopee-icon">🛒</div>
-                    <p>Dukung kami dengan mengunjungi sponsor</p>
-                </div>
-                <button class="btn btn-shopee" id="shopeeBtn">Kunjungi Shopee</button>
             </div>
         </div>
         
         <footer>
-            <p>Aplikasi Kompresi Gambar &copy; 2023 | 100% diproses di browser Anda - privasi terjamin</p>
+            <p>Aplikasi Kompresi Gambar oleh Anas &copy; 2025 | 100% diproses di browser Anda - privasi terjamin</p>
         </footer>
     </div>
     
@@ -537,8 +493,6 @@
             const applyResolutionBtn = document.getElementById('applyResolution');
             const widthInput = document.getElementById('widthInput');
             const heightInput = document.getElementById('heightInput');
-            const shopeeBtn = document.getElementById('shopeeBtn');
-            const adNotice = document.getElementById('adNotice');
             
             // Slider dan display
             const qualitySlider = document.getElementById('qualitySlider');
@@ -559,21 +513,6 @@
             let compressedBlob = null;
             let targetWidth = null;
             let targetHeight = null;
-            let adShown = false;
-            
-            // Fungsi untuk membuka iklan Shopee
-            function openShopeeAd() {
-                const shopeeUrl = 'https://s.shopee.co.id/7ARSiFnuqa';
-                window.open(shopeeUrl, '_blank');
-                adNotice.style.display = 'block';
-                adShown = true;
-                
-                // Simpan status di localStorage bahwa iklan sudah ditampilkan
-                localStorage.setItem('adShown', 'true');
-            }
-            
-            // Event listener untuk tombol Shopee
-            shopeeBtn.addEventListener('click', openShopeeAd);
             
             // Event listener untuk tombol unggah
             uploadBtn.addEventListener('click', () => fileInput.click());
@@ -658,7 +597,6 @@
                     previewContainer.style.display = 'grid';
                     downloadContainer.style.display = 'none';
                     sizeSuccess.style.display = 'none';
-                    adNotice.style.display = 'none';
                     
                     // Aktifkan tombol kompres
                     compressBtn.disabled = false;
@@ -707,12 +645,7 @@
             });
             
             // Kompresi gambar
-            compressBtn.addEventListener('click', function() {
-                compressImage();
-                // Reset status iklan
-                adShown = false;
-                adNotice.style.display = 'none';
-            });
+            compressBtn.addEventListener('click', compressImage);
             
             function compressImage() {
                 if (!originalFile) return;
@@ -826,27 +759,17 @@
                 setTimeout(() => {
                     progressContainer.style.display = 'none';
                     
-                    if (blob) {
-                        const url = URL.createObjectURL(blob);
-                        compressedImage.src = url;
-                        compressedSize.textContent = formatFileSize(blob.size);
-                        compressedDimensions.textContent = `${width}×${height}`;
-                        
-                        // Tampilkan container download
-                        downloadContainer.style.display = 'block';
-                        finalSize.textContent = formatFileSize(blob.size);
-                        
-                        // Simpan blob hasil kompresi untuk diunduh
-                        compressedBlob = blob;
-                        
-                        // Buka iklan Shopee jika belum ditampilkan
-                        if (!adShown) {
-                            setTimeout(openShopeeAd, 1000);
-                        }
-                    } else {
-                        // Tampilkan pesan error
-                        compressionResult.innerHTML = `<span style="color: red;">Gagal mengompresi gambar</span>`;
-                    }
+                    const url = URL.createObjectURL(blob);
+                    compressedImage.src = url;
+                    compressedSize.textContent = formatFileSize(blob.size);
+                    compressedDimensions.textContent = `${width}×${height}`;
+                    
+                    // Tampilkan container download
+                    downloadContainer.style.display = 'block';
+                    finalSize.textContent = formatFileSize(blob.size);
+                    
+                    // Simpan blob hasil kompresi untuk diunduh
+                    compressedBlob = blob;
                 }, 500);
             }
             
@@ -885,13 +808,11 @@
                 maxSizeDisplay.textContent = '400KB';
                 sizeWarning.style.display = 'none';
                 sizeSuccess.style.display = 'none';
-                adNotice.style.display = 'none';
                 compressionResult.innerHTML = '';
                 originalFile = null;
                 compressedBlob = null;
                 targetWidth = null;
                 targetHeight = null;
-                adShown = false;
                 
                 // Reset input resolusi
                 if (widthInput.value && heightInput.value) {
@@ -899,6 +820,27 @@
                     heightInput.value = '';
                 }
             });
+        
+
+            downloadBtn.addEventListener('click', function() {
+                if (!compressedBlob) return;
+                
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(compressedBlob);
+                
+                const originalName = originalFile.name.replace(/\.[^/.]+$/, "");
+                link.download = `${originalName}_compressed.jpg`;
+                
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Buka iklan Shopee setelah 500ms
+                setTimeout(() => {
+                    window.open('https://s.shopee.co.id/800ZkXth8F', '_blank');
+                }, 500);
+            });
+
         });
     </script>
 </body>
