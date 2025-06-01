@@ -13,7 +13,6 @@
             --dark: #212529;
             --success: #4cc9f0;
             --warning: #ff9e00;
-            --shopee: #ee4d2d;
             --gray: #6c757d;
             --border: #dee2e6;
         }
@@ -163,15 +162,6 @@
         .btn-warning:hover {
             background: #e68a00;
             box-shadow: 0 5px 15px rgba(255, 158, 0, 0.3);
-        }
-        
-        .btn-shopee {
-            background: var(--shopee);
-        }
-        
-        .btn-shopee:hover {
-            background: #e04226;
-            box-shadow: 0 5px 15px rgba(238, 77, 45, 0.3);
         }
         
         .preview-container {
@@ -366,84 +356,6 @@
             border-top: 1px solid var(--border);
         }
         
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-        }
-
-        .modal-content {
-            background-color: #fff;
-            margin: 10% auto;
-            padding: 25px;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 500px;
-            text-align: center;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            position: relative;
-        }
-
-        .close {
-            color: #aaa;
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 30px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: #000;
-            text-decoration: none;
-        }
-
-        .shopee-header {
-            background: linear-gradient(to right, var(--shopee), #ff7337);
-            color: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-weight: bold;
-            font-size: 20px;
-        }
-
-        .shopee-offer {
-            font-size: 18px;
-            margin-bottom: 15px;
-            color: #333;
-        }
-
-        .shopee-image {
-            max-width: 100%;
-            border-radius: 10px;
-            margin: 15px 0;
-            border: 1px solid #eee;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        
-        .shopee-benefits {
-            text-align: left;
-            background: #fff8f7;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            border-left: 4px solid var(--shopee);
-        }
-        
-        .shopee-benefits li {
-            margin-bottom: 8px;
-            padding-left: 5px;
-        }
-        
         @media (max-width: 768px) {
             .preview-container {
                 grid-template-columns: 1fr;
@@ -455,11 +367,6 @@
             
             .resolution-controls {
                 flex-direction: column;
-            }
-            
-            .modal-content {
-                margin: 20% auto;
-                width: 95%;
             }
         }
     </style>
@@ -566,44 +473,6 @@
         </footer>
     </div>
     
-    <!-- Modal Iklan Shopee -->
-    <div id="shopeeModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <div class="shopee-header">PENAWARAN SPESIAL DARI SHOPEE!</div>
-            
-            <p class="shopee-offer">Nikmati diskon hingga 90% untuk produk pilihan!</p>
-            
-            <a href="https://s.shopee.co.id/7ARSiFnuqa" target="_blank">
-                <img src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=1470&auto=format&fit=crop" 
-                     alt="Shopee Affiliate Offer" class="shopee-image">
-            </a>
-            
-            <div class="shopee-benefits">
-                <p><strong>Keuntungan berbelanja di Shopee:</strong></p>
-                <ul>
-                    <li>✅ Gratis ongkir ke seluruh Indonesia</li>
-                    <li>✅ Diskon hingga 90% setiap hari</li>
-                    <li>✅ Garansi uang kembali 100%</li>
-                    <li>✅ Pengiriman cepat dan aman</li>
-                    <li>✅ Pembayaran aman dengan berbagai metode</li>
-                </ul>
-            </div>
-            
-            <p style="margin: 20px 0; font-size: 16px; color: #555;">
-                Klik tombol di bawah untuk melihat penawaran eksklusif!
-            </p>
-            
-            <a href="https://s.shopee.co.id/7ARSiFnuqa" target="_blank" class="btn btn-shopee" style="margin-top: 10px;">
-                Lihat Penawaran Shopee Sekarang
-            </a>
-            
-            <p style="margin-top: 20px; font-size: 14px; color: #888;">
-                Iklan ini membantu kami menyediakan layanan gratis untuk Anda
-            </p>
-        </div>
-    </div>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Elemen DOM
@@ -640,15 +509,10 @@
             const compressedDimensions = document.getElementById('compressedDimensions');
             const finalSize = document.getElementById('finalSize');
             
-            // Modal
-            const modal = document.getElementById("shopeeModal");
-            const closeBtn = document.querySelector(".close");
-            
             let originalFile = null;
             let compressedBlob = null;
             let targetWidth = null;
             let targetHeight = null;
-            let adShownInSession = false;
             
             // Event listener untuk tombol unggah
             uploadBtn.addEventListener('click', () => fileInput.click());
@@ -785,12 +649,6 @@
             
             function compressImage() {
                 if (!originalFile) return;
-                
-                // Tampilkan iklan Shopee
-                if (!adShownInSession) {
-                    modal.style.display = "block";
-                    adShownInSession = true;
-                }
                 
                 // Reset status kompresi
                 sizeSuccess.style.display = 'none';
@@ -962,17 +820,6 @@
                     heightInput.value = '';
                 }
             });
-            
-            // Modal Shopee
-            closeBtn.onclick = function() {
-                modal.style.display = "none";
-            }
-
-            window.onclick = function(event) {
-                if (event.target == modal) {
-                    modal.style.display = "none";
-                }
-            }
         });
     </script>
 </body>
