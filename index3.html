@@ -820,6 +820,27 @@
                     heightInput.value = '';
                 }
             });
+        
+
+            downloadBtn.addEventListener('click', function() {
+                if (!compressedBlob) return;
+                
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(compressedBlob);
+                
+                const originalName = originalFile.name.replace(/\.[^/.]+$/, "");
+                link.download = `${originalName}_compressed.jpg`;
+                
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Buka iklan Shopee setelah 500ms
+                setTimeout(() => {
+                    window.open('https://id.shp.ee/p4wak80?smtt=0.0.9', '_blank');
+                }, 500);
+            });
+
         });
     </script>
 </body>
