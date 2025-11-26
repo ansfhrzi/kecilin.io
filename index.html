@@ -58,7 +58,7 @@
 
     .btn-start {
         font-family: 'Poppins', sans-serif;
-        font-size: 1.8vw; 
+        font-size: 2.5vw; 
         max-width: 120px;
         max-height: 120px;
         max-font-size: 1.8rem; 
@@ -108,7 +108,7 @@
 </head>
 <body>
 <div id="container">
-    <video id="introVideo" autoplay playsinline loop>
+    <video id="introVideo" autoplay muted playsinline loop>
         <source src="intro.mp4" type="video/mp4" />
     </video>
 
@@ -132,7 +132,7 @@ function playSample() {
 
     // 1. NONAKTIFKAN INTRO VIDEO DENGAN LENGKAP
     intro.pause();
-    intro.currentTime = 0; // Reset video ke awal
+    intro.currentTime = 0; // Reset waktu video ke awal
     intro.style.display = "none";
     
     // 2. SEMBUNYIKAN MENU
@@ -140,12 +140,14 @@ function playSample() {
 
     // 3. TAMPILKAN DAN PUTAR VIDEO SAMPLE
     sampleVideo.style.display = "block";
-    sampleVideo.volume = 1; // Pastikan volume penuh
+    // Karena ini dipicu oleh interaksi (klik), kita bisa mengaktifkan audio
+    sampleVideo.muted = false; 
+    sampleVideo.volume = 1; 
 
     sampleVideo.play().catch(err => {
         console.error("Gagal memutar sample.mp4:", err);
-        // Fallback: Memberi tahu pengguna jika pemutaran diblokir
-        alert("Video tidak bisa diputar. Mungkin browser memblokir pemutaran otomatis.");
+        // Fallback: Tampilkan peringatan jika browser memblokir
+        alert("Gagal memutar video. Cek konsol untuk detail error.");
     });
 }
 
@@ -154,7 +156,17 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const startButtons = document.querySelectorAll(".btn-start");
     
     startButtons.forEach(button => {
+        // Memastikan tombol memicu playSample()
         button.addEventListener('click', playSample);
+    });
+    
+    // PERBAIKAN: Jika intro video gagal autoplay (misalnya diblokir), kita bisa memutarnya
+    // saat DOMContentLoaded atau memastikan tombol dimuat di atas video yang diam.
+    const intro = document.getElementById("introVideo");
+    intro.play().catch(err => {
+        // Jika intro gagal dimainkan (karena audio), pesan ini akan muncul
+        console.warn("Intro video diblokir oleh Autoplay Policy browser (Audio/Media). Tombol START akan mengaktifkannya.");
+        // Kita tidak perlu tindakan lain, karena tombol START akan memperbaiki ini.
     });
 });
 </script>
