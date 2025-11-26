@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Custom Video Player</title>
@@ -36,18 +36,18 @@
         position: absolute;
         bottom: 10%;
         left: 50%;
-        transform: translateX(-50%);
+        transform: translateX(-50%); 
         width: 90%;
         display: flex;
-        justify-content: space-between;
+        justify-content: space-evenly; 
+        align-items: center; 
         z-index: 10;
+        transition: opacity 1s ease-out; 
     }
 
-    /* --- FULLSCREEN BUTTON (Menggunakan Simbol) --- */
-    #fullscreenBtn {
+    /* --- GLOBAL CONTROL STYLES (Volume, Play/Pause & Fullscreen) --- */
+    .control-btn, #volumeSlider {
         position: absolute;
-        top: 20px;
-        right: 20px;
         z-index: 11;
         background: rgba(255, 255, 255, 0.2);
         border: 1px solid rgba(255, 255, 255, 0.4);
@@ -55,35 +55,81 @@
         padding: 8px 12px;
         border-radius: 5px;
         cursor: pointer;
-        font-family: Arial, sans-serif; /* Simbol lebih baik di font standar */
-        font-size: 1.5rem; /* Ukuran besar untuk simbol */
+        font-family: Arial, sans-serif;
         line-height: 1;
         display: flex;
         align-items: center;
         justify-content: center;
         backdrop-filter: blur(5px);
-        transition: background 0.2s;
+        transition: background 0.2s, opacity 0.3s;
+        opacity: 0; 
     }
-    #fullscreenBtn:hover {
+    .control-btn:hover, #volumeSlider:hover {
         background: rgba(255, 255, 255, 0.4);
+        opacity: 1; 
+    }
+
+    /* --- VOLUME BUTTON (POJOK KIRI ATAS) --- */
+    #volumeBtn {
+        top: 20px;
+        left: 20px; 
+        font-size: 1.5rem; 
+    }
+
+    /* --- PLAY/PAUSE BUTTON (BARU: DI BAWAH VOLUME) --- */
+    #playPauseBtn {
+        top: 80px; 
+        left: 20px;
+        font-size: 1.5rem;
     }
     
-    /* KEYFRAMES UNTUK ANIMASI MEMANCAR */
-    @keyframes pulse-shadow {
-        0% {
-            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5), 0 10px 25px rgba(255, 0, 0, 0.6);
+    /* --- VOLUME SLIDER --- */
+    #volumeSlider {
+        top: 20px;
+        left: 80px; 
+        width: 100px;
+        height: auto;
+        padding: 10px 5px;
+        display: none; 
+    }
+
+    /* --- FULLSCREEN BUTTON (POJOK KANAN ATAS) --- */
+    #fullscreenBtn {
+        top: 20px;
+        right: 20px;
+        font-size: 1.5rem; 
+    }
+    
+    /* KEYFRAMES UNTUK CAHAYA HIJAU KONSTAN (Digunakan sebelum semua tombol ditekan) */
+    @keyframes glow-green-subtle {
+        0%, 100% {
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.7), 0 0 20px rgba(0, 255, 0, 0.5);
         }
         50% {
-            box-shadow: 0 0 30px rgba(255, 50, 50, 0.9), 0 15px 40px rgba(255, 50, 50, 0.8);
-        }
-        100% {
-            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5), 0 10px 25px rgba(255, 0, 0, 0.6);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.9), 0 0 30px rgba(0, 255, 0, 0.8);
         }
     }
 
+    /* KEYFRAMES BARU UNTUK EFEK KELAP-KELIP MERAH HIJAU */
+    @keyframes flash-red-green {
+        0%, 100% {
+            background: radial-gradient(circle at 30% 30%, #ff6666, #cc0000 70%); 
+            box-shadow: 
+                0 0 10px rgba(255, 0, 0, 0.8), 
+                0 0 20px rgba(255, 0, 0, 0.6);
+        }
+        50% {
+            background: radial-gradient(circle at 30% 30%, #99ff99, #00cc00 70%); 
+            box-shadow: 
+                0 0 10px rgba(0, 255, 0, 0.8), 
+                0 0 20px rgba(0, 255, 0, 0.6);
+        }
+    }
+
+
     .btn-start {
         font-family: 'Poppins', sans-serif;
-        font-size: 1.8vw; 
+        font-size: 2.5vw; 
         max-width: 120px;
         max-height: 120px;
         max-font-size: 1.8rem; 
@@ -94,19 +140,18 @@
         width: 20vw;
         height: 20vw;
         border-radius: 50%;
-        background: radial-gradient(circle at 30% 30%, #ff6666, #cc0000 70%);
-        border: none;
+        background: radial-gradient(circle at 30% 30%, #ff6666, #cc0000 70%); /* Default: Merah */
+        border: none; 
         cursor: pointer;
         position: relative;
         overflow: hidden;
-        transition: transform 0.15s ease-in-out;
+        transition: transform 0.15s ease-in-out, background 0.3s, box-shadow 0.3s, opacity 1s ease-out; 
         
         display: flex;
         justify-content: center;
         align-items: center;
 
-        /* APLIKASI ANIMASI */
-        animation: pulse-shadow 2s infinite ease-in-out; 
+        box-shadow: 0 10px 25px rgba(255, 0, 0, 0.6); 
     }
 
     .btn-start:active {
@@ -114,8 +159,43 @@
         box-shadow: 0 6px 12px rgba(0,0,0,0.5); 
     }
 
-    .btn-start::before {
-        content: ""; 
+    /* Gaya untuk tombol yang sudah aktif (ditekan) - HIJAU GLOW */
+    .btn-start.active {
+        background: radial-gradient(circle at 30% 30%, #99ff99, #00cc00 70%); 
+        animation: glow-green-subtle 1.5s infinite ease-in-out; 
+        cursor: default; 
+    }
+    
+    /* Gaya untuk 4 tombol yang sudah siap (saat semua ditekan) */
+    .btn-start.final-ready {
+        border: none; 
+        animation: flash-red-green 0.3s steps(1) infinite; 
+    }
+
+    /* Hapus pseudo-element jika ada */
+    .btn-start.final-ready::after {
+        content: none; 
+    }
+
+
+    /* --- OVERLAY TRANSISI --- */
+    #transitionOverlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: black;
+        opacity: 0; 
+        z-index: 100; 
+        pointer-events: none; 
+        transition: opacity 0.5s ease-in-out; 
+    }
+    #transitionOverlay.fade-in {
+        opacity: 1; 
+    }
+    #transitionOverlay.fade-out {
+        opacity: 0; 
     }
 
     /* Hide controls */
@@ -129,22 +209,101 @@
         display: none !important;
         opacity: 0 !important;
     }
+
+
+    /* --- TEKS "Gen-Z Preneur Launching Produk" --- */
+    #productLaunchText {
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%); /* Posisi tengah persis */
+        color: rgba(255, 255, 255, 0.8); /* Putih sedikit transparan */
+        font-family: 'Playfair Display', serif; /* Font elegan */
+        font-size: 5vw; /* Ukuran responsif */
+        text-align: center;
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); /* Shadow ringan untuk definisi */
+        z-index: 9; /* Di bawah kontrol, di atas video */
+        opacity: 1; /* Awalnya terlihat */
+        transition: opacity 1s ease-out; /* Transisi saat fade out */
+        line-height: 1.2; /* Untuk jarak antar baris */
+        white-space: nowrap; /* Mencegah teks wrapping secara default */
+    }
+
+    /* Keyframes untuk animasi glowing teks */
+    @keyframes text-glow {
+        0%, 100% {
+            text-shadow: 
+                0 0 8px rgba(255, 255, 255, 0.7),
+                0 0 15px rgba(255, 255, 255, 0.5),
+                0 0 25px rgba(255, 255, 255, 0.3);
+        }
+        50% {
+            text-shadow: 
+                0 0 12px rgba(255, 255, 255, 0.9),
+                0 0 25px rgba(255, 255, 255, 0.7),
+                0 0 40px rgba(255, 255, 255, 0.5);
+        }
+    }
+
+    #productLaunchText.glowing {
+        animation: text-glow 2s ease-in-out infinite alternate; /* Animasi glowing */
+    }
+
+    /* Keyframes untuk efek zoom out dan fade */
+    @keyframes text-zoom-fade {
+        0% {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+        100% {
+            transform: translate(-50%, -50%) scale(2.5); /* Zoom out hingga 50% ukuran asli */
+            opacity: 0; /* Fade out sepenuhnya */
+        }
+    }
+
+    #productLaunchText.zoom-out-fade {
+        animation: text-zoom-fade 6s ease-out forwards; /* Animasi zoom out dan fade selama 1.5 detik */
+        animation-delay: 0.5s; /* Mulai zoom out setelah 0.5 detik sirene */
+    }
+
+
+    /* Sembunyikan teks saat transisi dimulai (override jika zoom-out-fade aktif) */
+    #productLaunchText.fade-out {
+        opacity: 0; /* Ini akan di-override oleh zoom-out-fade jika diterapkan secara bersamaan */
+        transition: opacity 0.5s ease-out; /* Pertahankan transisi ini untuk kontrol lain jika perlu */
+    }
+
 </style>
 </head>
 <body>
 <div id="container">
-    <video id="introVideo" autoplay muted playsinline loop> 
+    <video id="introVideo" muted playsinline> 
         <source src="intro.mp4" type="video/mp4" />
     </video>
 
-    <div id="menu">
-        <button class="btn-start">START</button>
-        <button class="btn-start">START</button>
-        <button class="btn-start">START</button>
-        <button class="btn-start">START</button>
+    <audio id="clickSound" src="click.mp3" preload="auto"></audio>
+    <audio id="sirenSound" src="siren.mp3" preload="auto"></audio>
+
+    <button id="volumeBtn" class="control-btn">&#128263;</button> 
+    
+    <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5" class="control-btn" style="padding: 10px 8px; border:none; background: rgba(0,0,0,0.5);">
+
+    <button id="playPauseBtn" class="control-btn">&#9658;</button>
+
+    <button id="fullscreenBtn" class="control-btn">&#x26F6;</button>
+
+    <div id="productLaunchText" class="glowing">
+        Gen-Z Preneur<br>Launching Produk
     </div>
 
-    <button id="fullscreenBtn">&#x26F6;</button>
+    <div id="menu">
+        <button class="btn-start" data-index="0">START</button>
+        <button class="btn-start" data-index="1">START</button>
+        <button class="btn-start" data-index="2">START</button>
+        <button class="btn-start" data-index="3">START</button>
+    </div>
+
+<div id="transitionOverlay"></div>
 
     <video id="sampleVideo" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover;" playsinline>
         <source src="sample.mp4" type="video/mp4" />
@@ -152,62 +311,246 @@
 </div>
 
 <script>
-function playSample() {
-    const menu = document.getElementById("menu");
-    const intro = document.getElementById("introVideo");
-    const sampleVideo = document.getElementById("sampleVideo");
+let isMuted = true; 
+let currentVolume = 0.5; 
+let isPlaying = false; 
 
-    // 1. Mengaktifkan suara intro dan memutarnya (interaksi pertama)
-    // Walaupun video sudah diputar, ini adalah interaksi pertama yang mengaktifkan audio.
-    intro.muted = false; 
+let startButtonsStatus = [false, false, false, false]; 
+const totalStartButtons = 4;
+let allButtonsPressedOnce = false; 
+
+// Referensi Elemen
+const clickSound = document.getElementById('clickSound');
+const sirenSound = document.getElementById('sirenSound');
+const introVideo = document.getElementById('introVideo');
+const playPauseBtn = document.getElementById('playPauseBtn');
+const productLaunchText = document.getElementById('productLaunchText'); 
+
+// Fungsi pembantu untuk memainkan suara
+function playSound(audioElement, volume = 1.0) {
+    if (isMuted) return; 
     
-    // Memberikan waktu sebentar untuk memutar suara intro (opsional: 300ms untuk efek audio awal)
-    setTimeout(() => {
-        // Hentikan intro
-        intro.pause();
-        intro.currentTime = 0; 
-        intro.style.display = "none";
-        
-        // Sembunyikan menu
-        menu.style.display = "none";
-
-        // Tampilkan dan putar video sample dengan suara penuh
-        sampleVideo.style.display = "block";
-        sampleVideo.muted = false; 
-        sampleVideo.volume = 1;
-
-        sampleVideo.play().catch(err => {
-            console.error("Gagal memutar sample.mp4:", err);
-            alert("Gagal memutar video sample. Cek konsol untuk detail error.");
-        });
-    }, 300); // 300ms untuk efek audio intro sesaat sebelum beralih
+    audioElement.currentTime = 0; 
+    audioElement.volume = volume;
+    audioElement.play().catch(e => console.log("Gagal memutar suara:", e));
 }
 
+// Fungsi untuk mengupdate ikon Play/Pause
+function updatePlayPauseIcon() {
+    playPauseBtn.innerHTML = isPlaying ? "&#10074;&#10074;" : "&#9658;"; 
+}
+
+function togglePlayPause() {
+    if (introVideo.paused || introVideo.ended) {
+        introVideo.play().then(() => {
+            isPlaying = true;
+            updatePlayPauseIcon();
+        }).catch(e => console.error("Gagal memulai pemutaran:", e));
+    } else {
+        introVideo.pause();
+        isPlaying = false;
+        updatePlayPauseIcon();
+    }
+}
+
+// Tambahan: Agar video intro berulang secara default saat tombol START belum ditekan
+introVideo.addEventListener('ended', function() {
+    if (!allButtonsPressedOnce) {
+        introVideo.currentTime = 0;
+        introVideo.play();
+    }
+});
+
+
+function updateVolumeStatus() {
+    const sampleVideo = document.getElementById("sampleVideo");
+    const volumeBtn = document.getElementById("volumeBtn");
+    const slider = document.getElementById("volumeSlider");
+
+    sampleVideo.muted = isMuted;
+
+    const volumeLevel = isMuted ? 0 : currentVolume;
+    clickSound.volume = volumeLevel;
+    sirenSound.volume = volumeLevel;
+
+
+    if (!isMuted) {
+        introVideo.muted = false; 
+        introVideo.volume = currentVolume;
+        
+        if (currentVolume > 0.6) {
+             volumeBtn.innerHTML = "&#128266;"; 
+        } else if (currentVolume > 0) {
+             volumeBtn.innerHTML = "&#128265;"; 
+        } else {
+             volumeBtn.innerHTML = "&#128263;"; 
+        }
+        slider.value = currentVolume;
+    } else {
+        introVideo.muted = true;
+        introVideo.volume = 0; 
+        volumeBtn.innerHTML = "&#128263;"; 
+    }
+}
+
+function showVolumeSlider() {
+    const slider = document.getElementById("volumeSlider");
+    
+    if (slider.style.display === 'block') {
+        slider.style.display = 'none';
+    } else {
+        slider.style.display = 'block';
+        if (isMuted) {
+            isMuted = false;
+        }
+        updateVolumeStatus();
+    }
+}
+
+function setVolume(volumeValue) {
+    const volumeFloat = parseFloat(volumeValue);
+    currentVolume = volumeFloat;
+    isMuted = (volumeFloat === 0); 
+    updateVolumeStatus();
+}
+
+function handleStartButtonClick(buttonIndex) {
+    const startButtons = document.querySelectorAll(".btn-start");
+    
+    if (!startButtonsStatus[buttonIndex]) {
+        playSound(clickSound, 0.8); 
+
+        startButtonsStatus[buttonIndex] = true; 
+        startButtons[buttonIndex].classList.add('active'); 
+        
+        if (isMuted) { 
+            isMuted = false;
+            updateVolumeStatus(); 
+        }
+        
+        if (!isPlaying && startButtonsStatus.filter(s => s).length === 1) {
+            togglePlayPause(); 
+        }
+
+        const allButtonsPressed = startButtonsStatus.every(status => status === true);
+
+        if (allButtonsPressed && !allButtonsPressedOnce) {
+            allButtonsPressedOnce = true; 
+            console.log("Semua tombol START ditekan! Memulai Sirine & Animasi Kelap-Kelip Merah-Hijau...");
+            
+            introVideo.muted = true;
+            introVideo.volume = 0;
+            
+            playPauseBtn.style.display = 'none';
+
+            // Hentikan animasi glowing teks dan mulai efek zoom out & fade
+            if (productLaunchText) {
+                productLaunchText.classList.remove('glowing'); // Hentikan glowing
+                productLaunchText.classList.add('zoom-out-fade'); // Mulai zoom out + fade
+            }
+
+            // Aktifkan Animasi Kelap-Kelip Merah-Hijau pada tombol
+            startButtons.forEach(button => {
+                button.classList.remove('active'); 
+                button.classList.add('final-ready'); 
+            });
+            
+            playSound(sirenSound);
+
+            sirenSound.onended = function() {
+                startTransition();
+            };
+            
+            // Atur waktu untuk startTransition agar setelah animasi teks selesai
+            setTimeout(() => {
+                if (!sirenSound.paused) {
+                    sirenSound.pause();
+                }
+                startTransition();
+            }, 5000); // Durasi sirene 5 detik, transisi setelah itu
+            
+        } else if (!allButtonsPressed) {
+            console.log(`Tombol START ${buttonIndex + 1} ditekan. Menunggu yang lain.`);
+        }
+    }
+}
+
+function startTransition() {
+    const menu = document.getElementById("menu");
+    const startButtons = document.querySelectorAll(".btn-start");
+    const transitionOverlay = document.getElementById("transitionOverlay");
+    const volumeBtn = document.getElementById("volumeBtn");
+    const fullscreenBtn = document.getElementById("fullscreenBtn");
+    const slider = document.getElementById("volumeSlider");
+
+    sirenSound.onended = null;
+    
+    menu.style.opacity = '0'; 
+    startButtons.forEach(button => button.style.opacity = '0'); 
+    volumeBtn.style.opacity = '0';
+    fullscreenBtn.style.opacity = '0';
+    slider.style.display = 'none';
+    
+    // Pastikan teks telah disembunyikan (walaupun animasi zoom-out-fade seharusnya sudah melakukannya)
+    if (productLaunchText) {
+        productLaunchText.classList.add('fade-out'); 
+    }
+
+
+    transitionOverlay.style.pointerEvents = 'auto'; 
+    transitionOverlay.classList.add('fade-in');
+
+    setTimeout(() => {
+        playSample(); 
+        transitionOverlay.classList.remove('fade-in');
+        transitionOverlay.classList.add('fade-out');
+        transitionOverlay.style.pointerEvents = 'none'; 
+    }, 1000); 
+}
+
+function playSample() {
+    const sampleVideo = document.getElementById("sampleVideo");
+
+    introVideo.pause();
+    introVideo.currentTime = 0; 
+    introVideo.style.display = "none";
+    
+    sampleVideo.style.display = "block";
+
+    sampleVideo.muted = isMuted; 
+    if (!isMuted) {
+        sampleVideo.volume = currentVolume;
+    } else {
+        sampleVideo.volume = 0; 
+    }
+
+    sampleVideo.play().catch(err => {
+        console.error("Gagal memutar sample.mp4:", err);
+    });
+}
 
 function toggleFullScreen() {
     const container = document.getElementById("container");
     
     if (!document.fullscreenElement) {
-        // Masuk mode fullscreen
         if (container.requestFullscreen) {
             container.requestFullscreen();
-        } else if (container.mozRequestFullScreen) { /* Firefox */
+        } else if (container.mozRequestFullScreen) { 
             container.mozRequestFullScreen();
-        } else if (container.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+        } else if (container.webkitRequestFullscreen) { 
             container.webkitRequestFullscreen();
-        } else if (container.msRequestFullscreen) { /* IE/Edge */
+        } else if (container.msRequestFullscreen) { 
             container.msRequestFullscreen();
         }
     } else {
-        // Keluar mode fullscreen
         if (document.exitFullscreen) {
             document.exitFullscreen();
-        } else if (document.mozCancelFullScreen) { /* Firefox */
+        } else if (document.mozCancelFullScreen) { 
             document.mozCancelFullScreen();
-        } else if (document.webkitExitFullscreen) { /* Chrome, Safari and Opera */
-            document.webkitExitFullscreen();
-        } else if (document.msExitFullscreen) { /* IE/Edge */
-            document.msExitFullscreen();
+        } else if (container.webkitExitFullscreen) { 
+            container.webkitExitFullscreen();
+        } else if (container.msExitFullscreen) { 
+            container.msExitFullscreen();
         }
     }
 }
@@ -215,15 +558,30 @@ function toggleFullScreen() {
 
 // Inisialisasi Event Listeners
 document.addEventListener('DOMContentLoaded', (event) => {
-    // 1. Tombol Start
+    const volumeBtn = document.getElementById("volumeBtn");
+    const slider = document.getElementById("volumeSlider");
     const startButtons = document.querySelectorAll(".btn-start");
-    startButtons.forEach(button => {
-        button.addEventListener('click', playSample);
+
+    updatePlayPauseIcon(); 
+    updateVolumeStatus(); 
+    slider.value = currentVolume; 
+
+    startButtons.forEach((button, index) => {
+        button.setAttribute('data-index', index); 
+        button.addEventListener('click', () => handleStartButtonClick(index));
     });
 
-    // 2. Tombol Fullscreen
+    playPauseBtn.addEventListener('click', togglePlayPause);
+    
+    introVideo.addEventListener('play', () => { isPlaying = true; updatePlayPauseIcon(); });
+    introVideo.addEventListener('pause', () => { isPlaying = false; updatePlayPauseIcon(); });
+
+
     const fullscreenBtn = document.getElementById("fullscreenBtn");
     fullscreenBtn.addEventListener('click', toggleFullScreen);
+    
+    volumeBtn.addEventListener('click', showVolumeSlider); 
+    slider.addEventListener('input', (e) => setVolume(e.target.value)); 
 });
 </script>
 </body>
