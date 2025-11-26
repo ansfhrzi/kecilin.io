@@ -100,7 +100,7 @@
         font-size: 1.5rem; 
     }
     
-    /* KEYFRAMES UNTUK CAHAYA HIJAU KONSTAN (Digunakan sebelum semua tombol ditekan) */
+    /* KEYFRAMES UNTUK CAHAYA HIJAU KONSTAN (Digunakan saat tombol ditekan sekali) */
     @keyframes glow-green-subtle {
         0%, 100% {
             box-shadow: 0 0 10px rgba(0, 255, 0, 0.7), 0 0 20px rgba(0, 255, 0, 0.5);
@@ -110,7 +110,7 @@
         }
     }
 
-    /* KEYFRAMES BARU UNTUK EFEK KELAP-KELIP MERAH HIJAU */
+    /* KEYFRAMES BARU UNTUK EFEK KELAP-KELIP MERAH HIJAU (saat semua ditekan) */
     @keyframes flash-red-green {
         0%, 100% {
             background: radial-gradient(circle at 30% 30%, #ff6666, #cc0000 70%); 
@@ -123,6 +123,16 @@
             box-shadow: 
                 0 0 10px rgba(0, 255, 0, 0.8), 
                 0 0 20px rgba(0, 255, 0, 0.6);
+        }
+    }
+
+    /* KEYFRAMES BARU UNTUK EFEK GLOWING MERAH (saat tombol OFF) */
+    @keyframes glow-red-subtle {
+        0%, 100% {
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.7), 0 0 20px rgba(255, 0, 0, 0.5);
+        }
+        50% {
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.9), 0 0 30px rgba(255, 0, 0, 0.8);
         }
     }
 
@@ -151,12 +161,14 @@
         justify-content: center;
         align-items: center;
 
-        box-shadow: 0 10px 25px rgba(255, 0, 0, 0.6); 
+        /* Animasi glowing merah default untuk tombol OFF */
+        animation: glow-red-subtle 1.5s infinite ease-in-out;
     }
 
     .btn-start:active {
         transform: scale(0.88);
         box-shadow: 0 6px 12px rgba(0,0,0,0.5); 
+        animation: none; /* Hentikan glowing saat ditekan */
     }
 
     /* Gaya untuk tombol yang sudah aktif (ditekan) - HIJAU GLOW */
@@ -216,17 +228,17 @@
         position: absolute;
         top: 40%;
         left: 50%;
-        transform: translate(-50%, -50%); /* Posisi tengah persis */
-        color: rgba(255, 255, 255, 0.8); /* Putih sedikit transparan */
-        font-family: 'Playfair Display', serif; /* Font elegan */
-        font-size: 5vw; /* Ukuran responsif */
+        transform: translate(-50%, -50%); 
+        color: rgba(255, 255, 255, 0.8); 
+        font-family: 'Playfair Display', serif; 
+        font-size: 5vw; 
         text-align: center;
-        text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); /* Shadow ringan untuk definisi */
-        z-index: 9; /* Di bawah kontrol, di atas video */
-        opacity: 1; /* Awalnya terlihat */
-        transition: opacity 1s ease-out; /* Transisi saat fade out */
-        line-height: 1.2; /* Untuk jarak antar baris */
-        white-space: nowrap; /* Mencegah teks wrapping secara default */
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); 
+        z-index: 9; 
+        opacity: 1; 
+        transition: opacity 1s ease-out; 
+        line-height: 1.2; 
+        white-space: nowrap; 
     }
 
     /* Keyframes untuk animasi glowing teks */
@@ -246,31 +258,31 @@
     }
 
     #productLaunchText.glowing {
-        animation: text-glow 2s ease-in-out infinite alternate; /* Animasi glowing */
+        animation: text-glow 2s ease-in-out infinite alternate; 
     }
 
-    /* Keyframes untuk efek zoom out dan fade */
+    /* Keyframes untuk efek membesar dan fade hingga hilang */
     @keyframes text-zoom-fade {
         0% {
             transform: translate(-50%, -50%) scale(1);
             opacity: 1;
         }
         100% {
-            transform: translate(-50%, -50%) scale(2.5); /* Zoom out hingga 50% ukuran asli */
-            opacity: 0; /* Fade out sepenuhnya */
+            transform: translate(-50%, -50%) scale(2); 
+            opacity: 0; 
         }
     }
 
     #productLaunchText.zoom-out-fade {
-        animation: text-zoom-fade 6s ease-out forwards; /* Animasi zoom out dan fade selama 1.5 detik */
-        animation-delay: 0.5s; /* Mulai zoom out setelah 0.5 detik sirene */
+        animation: text-zoom-fade 6s ease-out forwards; 
+        animation-delay: 0.5s; 
     }
 
 
     /* Sembunyikan teks saat transisi dimulai (override jika zoom-out-fade aktif) */
     #productLaunchText.fade-out {
-        opacity: 0; /* Ini akan di-override oleh zoom-out-fade jika diterapkan secara bersamaan */
-        transition: opacity 0.5s ease-out; /* Pertahankan transisi ini untuk kontrol lain jika perlu */
+        opacity: 0; 
+        transition: opacity 0.5s ease-out; 
     }
 
 </style>
@@ -422,6 +434,7 @@ function handleStartButtonClick(buttonIndex) {
 
         startButtonsStatus[buttonIndex] = true; 
         startButtons[buttonIndex].classList.add('active'); 
+        startButtons[buttonIndex].classList.remove('glow-red-subtle'); // Hentikan glowing merah
         
         if (isMuted) { 
             isMuted = false;
@@ -443,10 +456,10 @@ function handleStartButtonClick(buttonIndex) {
             
             playPauseBtn.style.display = 'none';
 
-            // Hentikan animasi glowing teks dan mulai efek zoom out & fade
+            // Hentikan animasi glowing teks dan mulai efek zoom in/out & fade
             if (productLaunchText) {
-                productLaunchText.classList.remove('glowing'); // Hentikan glowing
-                productLaunchText.classList.add('zoom-out-fade'); // Mulai zoom out + fade
+                productLaunchText.classList.remove('glowing'); 
+                productLaunchText.classList.add('zoom-out-fade'); 
             }
 
             // Aktifkan Animasi Kelap-Kelip Merah-Hijau pada tombol
@@ -461,13 +474,12 @@ function handleStartButtonClick(buttonIndex) {
                 startTransition();
             };
             
-            // Atur waktu untuk startTransition agar setelah animasi teks selesai
             setTimeout(() => {
                 if (!sirenSound.paused) {
                     sirenSound.pause();
                 }
                 startTransition();
-            }, 5000); // Durasi sirene 5 detik, transisi setelah itu
+            }, 5000); 
             
         } else if (!allButtonsPressed) {
             console.log(`Tombol START ${buttonIndex + 1} ditekan. Menunggu yang lain.`);
@@ -491,7 +503,6 @@ function startTransition() {
     fullscreenBtn.style.opacity = '0';
     slider.style.display = 'none';
     
-    // Pastikan teks telah disembunyikan (walaupun animasi zoom-out-fade seharusnya sudah melakukannya)
     if (productLaunchText) {
         productLaunchText.classList.add('fade-out'); 
     }
