@@ -4,7 +4,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>launcing</title>
+<title>Custom Video Player</title>
 <style>
     body, html {
         margin: 0;
@@ -45,10 +45,85 @@
         transition: opacity 1s ease-out; 
     }
 
-    /* KEYFRAMES UNTUK ANIMASI MEMANCAR */
-    @keyframes pulse-shadow {
-        0% {
-            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5), 0 10px 25px rgba(255, 0, 0, 0.6);
+    /* --- GLOBAL CONTROL STYLES (Volume, Play/Pause & Fullscreen) --- */
+    .control-btn, #volumeSlider {
+        position: absolute;
+        z-index: 11;
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-family: Arial, sans-serif;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(5px);
+        transition: background 0.2s, opacity 0.3s;
+        opacity: 0.4; 
+    }
+    .control-btn:hover, #volumeSlider:hover {
+        background: rgba(255, 255, 255, 0.4);
+        opacity: 1; 
+    }
+
+    /* --- VOLUME BUTTON (POJOK KIRI ATAS) --- */
+    #volumeBtn {
+        top: 20px;
+        left: 20px; 
+        font-size: 1.5rem; 
+    }
+
+    /* --- PLAY/PAUSE BUTTON (DI BAWAH VOLUME) --- */
+    #playPauseBtn {
+        top: 80px; 
+        left: 20px;
+        font-size: 1.5rem;
+    }
+    
+    /* --- VOLUME SLIDER --- */
+    #volumeSlider {
+        top: 20px;
+        left: 80px; 
+        width: 100px;
+        height: auto;
+        padding: 10px 5px;
+        display: none; 
+    }
+
+    /* --- FULLSCREEN BUTTON (POJOK KANAN ATAS) --- */
+    #fullscreenBtn {
+        top: 20px;
+        right: 20px;
+        font-size: 1.5rem; 
+    }
+
+    /* --- TOMBOL REFRESH BARU (DI BAWAH FULLSCREEN) --- */
+    #refreshBtn {
+        top: 80px; /* 20px (Fullscreen) + 60px (Jarak) */
+        right: 20px;
+        font-size: 1.5rem;
+    }
+    
+    /* KEYFRAMES UNTUK CAHAYA HIJAU KONSTAN (Digunakan saat tombol ditekan sekali) */
+    @keyframes glow-green-subtle {
+        0%, 100% {
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.7), 0 0 20px rgba(0, 255, 0, 0.5);
+        }
+        50% {
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.9), 0 0 30px rgba(0, 255, 0, 0.8);
+        }
+    }
+
+    /* KEYFRAMES BARU UNTUK EFEK KELAP-KELIP MERAH HIJAU (saat semua ditekan) */
+    @keyframes flash-red-green {
+        0%, 100% {
+            background: radial-gradient(circle at 30% 30%, #ff6666, #cc0000 70%); 
+            box-shadow: 
+                0 0 10px rgba(255, 0, 0, 0.8), 
+                0 0 20px rgba(255, 0, 0, 0.6);
         }
         50% {
             background: radial-gradient(circle at 30% 30%, #99ff99, #00cc00 70%); 
@@ -71,20 +146,19 @@
 
     .btn-start {
         font-family: 'Poppins', sans-serif;
-        font-size: 2.5vw; 
+        font-size: 1.8vw; 
         max-width: 120px;
         max-height: 120px;
         max-font-size: 1.8rem; 
         font-weight: 800;
-        /*color: white;*/
-        /*text-shadow: 0 0 5px rgba(255, 255, 255, 0.7), 0 3px 6px rgba(0, 0, 0, 0.9);*/
-        color: rgba(255, 255, 255, 0.7); /* Dari 'white' ke putih dengan 70% opacity */
-        /*text-shadow: 0 0 3px rgba(255, 255, 255, 0.5), 0 2px 4px rgba(0, 0, 0, 0.7); /* Bayangan sedikit dikurangi */
+        
+        color: rgba(255, 255, 255, 0.7); 
+        text-shadow: 0 0 3px rgba(255, 255, 255, 0.5), 0 2px 4px rgba(0, 0, 0, 0.7); 
         
         width: 20vw;
         height: 20vw;
         border-radius: 50%;
-        background: radial-gradient(circle at 30% 30%, #ff6666, #cc0000 70%); /* Default: Merah */
+        background: radial-gradient(circle at 30% 30%, #ff6666, #cc0000 70%); 
         border: none; 
         cursor: pointer;
         position: relative;
@@ -102,7 +176,7 @@
     .btn-start:active {
         transform: scale(0.88);
         box-shadow: 0 6px 12px rgba(0,0,0,0.5); 
-        animation: none; /* Hentikan glowing saat ditekan */
+        animation: none; 
     }
 
     /* Gaya untuk tombol yang sudah aktif (ditekan) - HIJAU GLOW */
@@ -160,7 +234,7 @@
     /* --- TEKS "Gen-Z Preneur Launching Produk" --- */
     #productLaunchText {
         position: absolute;
-        top: 30%;
+        top: 50%;
         left: 50%;
         transform: translate(-50%, -50%); 
         color: rgba(255, 255, 255, 0.8); 
@@ -208,7 +282,7 @@
     }
 
     #productLaunchText.zoom-out-fade {
-        animation: text-zoom-fade 6s ease-out forwards; 
+        animation: text-zoom-fade 1.5s ease-out forwards; 
         animation-delay: 0.5s; 
     }
 
@@ -223,7 +297,7 @@
 </head>
 <body>
 <div id="container">
-    <video id="introVideo" autoplay muted playsinline loop>
+    <video id="introVideo" muted playsinline> 
         <source src="intro.mp4" type="video/mp4" />
     </video>
 
@@ -238,8 +312,10 @@
 
     <button id="fullscreenBtn" class="control-btn">&#x26F6;</button>
 
+    <button id="refreshBtn" class="control-btn">&#x21BB;</button>
+
     <div id="productLaunchText" class="glowing">
-        GEN-Z Preneur<br>Launching Produk
+        Gen-Z Preneur<br>Launching Produk
     </div>
 
     <div id="menu">
@@ -248,6 +324,8 @@
         <button class="btn-start" data-index="2">START</button>
         <button class="btn-start" data-index="3">START</button>
     </div>
+
+<div id="transitionOverlay"></div>
 
     <video id="sampleVideo" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover;" playsinline>
         <source src="sample.mp4" type="video/mp4" />
@@ -366,7 +444,7 @@ function handleStartButtonClick(buttonIndex) {
 
         startButtonsStatus[buttonIndex] = true; 
         startButtons[buttonIndex].classList.add('active'); 
-        startButtons[buttonIndex].classList.remove('glow-red-subtle'); // Hentikan glowing merah
+        startButtons[buttonIndex].classList.remove('glow-red-subtle'); 
         
         if (isMuted) { 
             isMuted = false;
@@ -426,6 +504,7 @@ function startTransition() {
     const volumeBtn = document.getElementById("volumeBtn");
     const fullscreenBtn = document.getElementById("fullscreenBtn");
     const slider = document.getElementById("volumeSlider");
+    const refreshBtn = document.getElementById("refreshBtn"); // Ambil ref. tombol refresh
 
     sirenSound.onended = null;
     
@@ -433,6 +512,7 @@ function startTransition() {
     startButtons.forEach(button => button.style.opacity = '0'); 
     volumeBtn.style.opacity = '0';
     fullscreenBtn.style.opacity = '0';
+    refreshBtn.style.opacity = '0'; // Sembunyikan tombol refresh
     slider.style.display = 'none';
     
     if (productLaunchText) {
@@ -448,49 +528,94 @@ function startTransition() {
         transitionOverlay.classList.remove('fade-in');
         transitionOverlay.classList.add('fade-out');
         transitionOverlay.style.pointerEvents = 'none'; 
+
+        // Tampilkan kembali tombol kontrol setelah video sampel dimainkan
+        volumeBtn.style.opacity = '0.7'; 
+        fullscreenBtn.style.opacity = '0.7';
+        refreshBtn.style.opacity = '0.7'; 
+
     }, 1000); 
 }
 
 function playSample() {
     const sampleVideo = document.getElementById("sampleVideo");
 
-    // 1. NONAKTIFKAN INTRO VIDEO DENGAN LENGKAP
-    intro.pause();
-    intro.currentTime = 0; // Reset waktu video ke awal
-    intro.style.display = "none";
+    introVideo.pause();
+    introVideo.currentTime = 0; 
+    introVideo.style.display = "none";
     
-    // 2. SEMBUNYIKAN MENU
-    menu.style.display = "none";
-
-    // 3. TAMPILKAN DAN PUTAR VIDEO SAMPLE
     sampleVideo.style.display = "block";
-    // Karena ini dipicu oleh interaksi (klik), kita bisa mengaktifkan audio
-    sampleVideo.muted = false; 
-    sampleVideo.volume = 1; 
+
+    sampleVideo.muted = isMuted; 
+    if (!isMuted) {
+        sampleVideo.volume = currentVolume;
+    } else {
+        sampleVideo.volume = 0; 
+    }
 
     sampleVideo.play().catch(err => {
         console.error("Gagal memutar sample.mp4:", err);
-        // Fallback: Tampilkan peringatan jika browser memblokir
-        alert("Gagal memutar video. Cek konsol untuk detail error.");
     });
 }
 
-// Tambahkan Event Listener ke semua tombol START
+function toggleFullScreen() {
+    const container = document.getElementById("container");
+    
+    if (!document.fullscreenElement) {
+        if (container.requestFullscreen) {
+            container.requestFullscreen();
+        } else if (container.mozRequestFullScreen) { 
+            container.mozRequestFullScreen();
+        } else if (container.webkitRequestFullscreen) { 
+            container.webkitRequestFullscreen();
+        } else if (container.msRequestFullscreen) { 
+            container.msRequestFullscreen();
+        }
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) { 
+            document.mozCancelFullScreen();
+        } else if (container.webkitExitFullscreen) { 
+            container.webkitExitFullscreen();
+        } else if (container.msExitFullscreen) { 
+            container.msExitFullscreen();
+        }
+    }
+}
+
+
+// Inisialisasi Event Listeners
 document.addEventListener('DOMContentLoaded', (event) => {
+    const volumeBtn = document.getElementById("volumeBtn");
+    const slider = document.getElementById("volumeSlider");
     const startButtons = document.querySelectorAll(".btn-start");
-    
-    startButtons.forEach(button => {
-        // Memastikan tombol memicu playSample()
-        button.addEventListener('click', playSample);
+    const refreshBtn = document.getElementById("refreshBtn"); // Ambil ref. tombol refresh
+
+    updatePlayPauseIcon(); 
+    updateVolumeStatus(); 
+    slider.value = currentVolume; 
+
+    startButtons.forEach((button, index) => {
+        button.setAttribute('data-index', index); 
+        button.addEventListener('click', () => handleStartButtonClick(index));
     });
+
+    playPauseBtn.addEventListener('click', togglePlayPause);
     
-    // PERBAIKAN: Jika intro video gagal autoplay (misalnya diblokir), kita bisa memutarnya
-    // saat DOMContentLoaded atau memastikan tombol dimuat di atas video yang diam.
-    const intro = document.getElementById("introVideo");
-    intro.play().catch(err => {
-        // Jika intro gagal dimainkan (karena audio), pesan ini akan muncul
-        console.warn("Intro video diblokir oleh Autoplay Policy browser (Audio/Media). Tombol START akan mengaktifkannya.");
-        // Kita tidak perlu tindakan lain, karena tombol START akan memperbaiki ini.
+    introVideo.addEventListener('play', () => { isPlaying = true; updatePlayPauseIcon(); });
+    introVideo.addEventListener('pause', () => { isPlaying = false; updatePlayPauseIcon(); });
+
+
+    const fullscreenBtn = document.getElementById("fullscreenBtn");
+    fullscreenBtn.addEventListener('click', toggleFullScreen);
+    
+    volumeBtn.addEventListener('click', showVolumeSlider); 
+    slider.addEventListener('input', (e) => setVolume(e.target.value)); 
+
+    // Event listener untuk tombol Refresh
+    refreshBtn.addEventListener('click', () => {
+        window.location.reload();
     });
 });
 </script>
